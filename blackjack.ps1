@@ -63,7 +63,7 @@ function print($arr, $arr2) {
         write-host("Current score: " + $score) 
     } else {
         $score = 0
-        $arr | Foreach { $score += $_}
+        $arr.value | Foreach { $score += $_}
         $sum 
         write-host("Your Hand: " + $arr.symbol)
         write-host("Current score: " + $score)
@@ -115,7 +115,7 @@ function Play() {
                 $playerHand += $boot[$i]
                 $i++
                 print $playerHand $dealerHand
-                break
+                
             } elseif($option -eq "s") {
                 #dealer turn
                 break
@@ -123,7 +123,7 @@ function Play() {
                 $option = "Wrong input"
                 $option
             }
-        } while($option -eq "Wrong input")
+        } while($option -eq "Wrong input" -or $option -eq "h")
         break
     }
  }
