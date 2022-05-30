@@ -79,27 +79,33 @@ function CheckAce ($hand, $score)
 }
 
 
-function print($arr, $arr2, $score) {
+function print($arr, $arr2, $score, $dealerScore, $dealerTurn) {
     cls
-    write-host("Dealer Hand: " + $arr2[0].symbol) 
-
-    if ($arr.Length -eq 2) {
-        write-host("Your Hand:   " + $arr[0].symbol, $arr[1].symbol)
-        write-host("Current score: " + $score) 
-    } elseif($arr.Length -eq 3) {
-        #$arr.value | Foreach { $score += $_}
-        write-host("Your Hand:   " + $arr[0].symbol, $arr[1].symbol, $arr[2].symbol)
-        write-host("Current score: " + $score) 
-    } else {
-        #$score = 0
-        #$arr.value | Foreach { $score += $_} 
+    if ($dealerTurn) {
+        write-host("Dealer Hand: " + $arr2.symbol) 
         write-host("Your Hand: " + $arr.symbol)
-        write-host("Current score: " + $score)
+        write-host("Dealer score: " + $dealerScore)
+        write-host("Your score: " + $score)
+    } else {
+
+        write-host("Dealer Hand: " + $arr2[0].symbol) 
+        write-host("Your Hand:   " + $arr.symbol)
+        write-host("Current score: " + $score) 
     }
-    
 }
 
-function dealerPlay($hand, $score) {
+function dealerPlay($boot, $index, $hand, $score) {
+    for($i=0; $i -lt 1; $i++) {
+        if($score -lt 17) {
+            $hand += $boot[$index]
+            $score += $boot[$index].value
+            $score = CheckAce $hand $score 
+            $index++
+        } else {
+            return $hand, $score, $index
+        }
+        $i--
+    }
     $hand.symbol
     $score
 }
@@ -117,22 +123,7 @@ function Play() {
     write "shuffling" 
     start-sleep -seconds 2
 
-    #$boot 
-
     write "`n"
-    
- 
-    #amount of cards in boot
-    #$boot.Length
-
-    # first card of the boot
-    #$boot[0]
-
-    #last card of the boot
-    #$boot[-1]
-
-    # get a random card from the boot
-    #Get-Random -InputObject $boot
    
     
     $i = 0
@@ -152,7 +143,7 @@ function Play() {
 
         [int]$playerscore = CheckAce $playerHand $playerscore 
 
-        print $playerHand $dealerHand $playerScore
+        print $playerHand $dealerHand $playerScore $dealerScore $False
 
 
         do {
@@ -164,11 +155,15 @@ function Play() {
                     $playerScore += $boot[$i].value
                     $playerscore = CheckAce $playerHand $playerscore 
                     $i++
-                    print $playerHand $dealerHand $playerScore
+                    print $playerHand $dealerHand $playerScore $dealerScore $False
                 
                 } elseif($option -eq "s") {
-                    #dealer turn
-                    dealerPlay $dealerHand $dealerScore
+                    #dealer turn, returns hand, score, index
+                    $array = dealerPlay $boot $i $dealerHand $dealerScore 
+                    $dealerHand = $array[0]
+                    $dealerScore = $array[1]
+                    $i = $index
+                    print $playerHand $dealerHand $playerScore $dealerScore $True
                     break
                 } else {
                     $option = "Wrong input"
