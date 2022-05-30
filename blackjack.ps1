@@ -60,16 +60,9 @@ function CheckAce ($hand, $score)
                 {$_ -gt 21} {$temp-=10; Break}
                 Default {}
             }
-            if($temp -gt 21) {
-                foreach ($card in $hand)
-                {
-        
-                    if ($card.value -eq 1) {
-                        $temp -= 10
-                    }
-                }
-            }
+            
         }
+        
         
     }
 
@@ -95,6 +88,7 @@ function print($arr, $arr2, $score, $dealerScore, $dealerTurn) {
 }
 
 function dealerPlay($boot, $index, $hand, $score) {
+    $score = CheckAce $hand $score 
     for($i=0; $i -lt 1; $i++) {
         if($score -lt 17) {
             $hand += $boot[$index]
@@ -131,8 +125,9 @@ function Play() {
     write "`n"
    
     
-    $i = 0
+    
     while ($True) {
+        $i = 0
         [int]$playerScore = $null
         [int]$dealerScore = $null
 
@@ -187,12 +182,20 @@ function Play() {
         elseif (($dealerScore -gt $playerScore)-and ($dealerscore -le 21) -or ($playerScore -gt 21))
         {
             write-host "you lose"
+        } elseif($dealerScore -gt 21 -and $playerScore -le 21) {
+            write-host "You win!"
         }
         else
         {
             write-host "push"
         }
-        break
+
+        $choice = read-host "Play again? y/n"
+        do {
+            if ($choice -eq "n") { 
+                exit
+            } 
+        } until ($choice -eq "n" -or $choice -eq "y")
     }
  }
 
