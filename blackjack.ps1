@@ -1,6 +1,15 @@
 ﻿cls
-$script:cardCount = 0
+<#
+    members:      Ethan Cochran, Nic Alfonso, William Norman, Michael Ressler
+    Date:         30 May 2022
+    Description:  This is the card game, blackjack. The player can have the choice to either stand or hit during their turn. Going over 21 is a bust. Once the player stands, 
+                  it will be the dealers turn to play. The dealer will hit until their total is at least 17. If neither player busts, the winner goes to whoever is closer to 21.
+                  A draw will result in a push. Once the boot gets low on cards, the game will automatically reshuffle the deck. Good luck!
+#>
 
+$script:cardCount = 0 #tracker for cards played, used to know when to reshuffle the deck
+
+#class for the card, with attributes being its point value and its symbol. The aces hold a secondary value of 11.
 class Card {
     [string]$symbol
     [int]$value
@@ -43,6 +52,7 @@ function CreateDecks($num, $deck) {
 
 }
 
+# Function that reshuffles the boot with played cards
 function Shuffle($decks) {
     write-host "shuffling" 
     start-sleep -seconds 2
@@ -50,6 +60,8 @@ function Shuffle($decks) {
     return $decks
 }
 
+
+#function checks if an ace is in a hand, and will calculate if 1 or 11 points is better
 function CheckAce ($hand, $score)
 {
     $temp = $score
@@ -75,6 +87,7 @@ function CheckAce ($hand, $score)
 }
 
 
+#function prints dealer's hand and player's hand and score
 function print($arr, $arr2, $score, $dealerScore, $dealerTurn) {
     cls
     if ($dealerTurn) {
@@ -90,6 +103,7 @@ function print($arr, $arr2, $score, $dealerScore, $dealerTurn) {
     }
 }
 
+# function that plays as dealer, will hit until score is at least 17
 function dealerPlay($boot, $index, $hand, $score) {
     $score = CheckAce $hand $score 
     for($i=0; $i -lt 1; $i++) {
@@ -113,12 +127,19 @@ function dealerPlay($boot, $index, $hand, $score) {
 }
 
 
+# main function of the game loop, it is the game controller 
 function Play() {
     write "Welcome to blackjack"
-    read-host "press enter to continue"
+    do {
+        try {
+            [int]$amount = read-host "# of decks (1-10) you would like in boot ->"
+        } catch {
+            "wrong input"
+        }
+    } until($amount -gt 0 -and $amount -lt 11)
 
     $deck = @()
-    $boot = CreateDecks 1 $deck
+    $boot = CreateDecks $amount $deck
 
     $boot = shuffle $boot
 
@@ -148,7 +169,8 @@ function Play() {
 
 
         do {
-            
+            #player's turn
+
             if ($playerScore -le 21) {
                 $option = read-host "hit (h) or stand? (s)"
                 if ($option -eq "h") {
@@ -161,6 +183,7 @@ function Play() {
                 
                 } elseif($option -eq "s") {
                     #dealer turn, returns hand, score, index
+
                     $array = dealerPlay $boot $i $dealerHand $dealerScore 
                     $dealerHand = $array[0]
                     $dealerScore = $array[1]
@@ -193,11 +216,14 @@ function Play() {
         }
 
         do {
+            $script:cardCount 
+            $boot.Length-15
             $choice = read-host "Play again? y/n"
+            
             if ($choice -eq "n") { 
                 exit
             } 
-            if ($script:cardCount -ge 40) {
+            if ($script:cardCount -ge ($boot.Length-15)) {
                 $script:cardCount = 0
                 $boot = shuffle $boot
                 $i = 0
