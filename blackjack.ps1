@@ -98,15 +98,22 @@ function dealerPlay($hand, $score) {
 
 
 function Play() {
+    write "Welcome to blackjack"
+    read-host "press enter to continue"
+
     $deck = @()
     $boot = CreateDecks 7 $deck
 
     $boot = shuffle $boot
 
+    write "shuffling" 
+    start-sleep -seconds 2
+
     #$boot 
 
     write "`n"
     
+ 
     #amount of cards in boot
     #$boot.Length
 
@@ -118,7 +125,7 @@ function Play() {
 
     # get a random card from the boot
     #Get-Random -InputObject $boot
-
+   
     
     $i = 0
     while ($True) {
