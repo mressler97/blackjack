@@ -42,6 +42,34 @@ function CreateDecks($num, $deck) {
 
 }
 
+function Shuffle($decks) {
+    $decks = $decks | Sort-Object {Get-Random}
+    return $decks
+}
+
+function print($arr, $arr2) {
+    cls
+    write-host("Dealer Hand: " + $arr2[0].symbol) 
+    $score = [int]($arr[0].value) + [int]($arr[1].value)
+
+    if ($arr.Length -eq 2) {
+        write-host("Your Hand:   " + $arr[0].symbol, $arr[1].symbol)
+        write-host("Current score: " + $score) 
+    } elseif($arr.Length -eq 3) {
+        $score = 0
+        $arr.value | Foreach { $score += $_}
+        $sum 
+        write-host("Your Hand:   " + $arr[0].symbol, $arr[1].symbol, $arr[2].symbol)
+        write-host("Current score: " + $score) 
+    } else {
+        $score = 0
+        $arr | Foreach { $score += $_}
+        $sum 
+        write-host("Your Hand: " + $arr.symbol)
+        write-host("Current score: " + $score)
+    }
+    
+}
 
 
 
@@ -49,22 +77,58 @@ function Play() {
     $deck = @()
     $boot = CreateDecks 7 $deck
 
-    $boot 
+    $boot = shuffle $boot
+
+    #$boot 
 
     write "`n"
     
     #amount of cards in boot
-    $boot.Length
+    #$boot.Length
 
     # first card of the boot
-    $boot[0]
+    #$boot[0]
 
     #last card of the boot
-    $boot[-1]
+    #$boot[-1]
 
     # get a random card from the boot
-    Get-Random -InputObject $boot
-}
+    #Get-Random -InputObject $boot
+
+    
+    $i = 0
+    while ($True) {
+        $playerScore = $null
+        $dealerScore = $null
+
+        $playerHand = @()
+        $dealerHand = @()
+
+        $playerHand += $boot[$i], $boot[$i+1]
+        $dealerHand += $boot[$i+2], $boot[$i+3]
+        $i += 4
+        print $playerHand $dealerHand
+        
+        do {
+            $option = read-host "hit (h) or stand? (s)"
+            if ($option -eq "h") {
+                $playerHand += $boot[$i]
+                $i++
+                print $playerHand $dealerHand
+                break
+            } elseif($option -eq "s") {
+                #dealer turn
+                break
+            } else {
+                $option = "Wrong input"
+                $option
+            }
+        } while($option -eq "Wrong input")
+        break
+    }
+ }
+
+
 
 Play
 
