@@ -51,19 +51,15 @@ function CheckAce ($hand, $score)
 {
     foreach ($card in $hand)
     {
-     
+
         if ($card.value -eq 1)
         {
             $temp = $score + 10
-            if ($temp -le 21)
-            {
-                return $temp
+            switch($temp) {
+                {$_ -le 21} {return $temp; Break}
+                Default {return $score}
             }
 
-            else 
-            {
-                return $score
-            }
         }
     }
 
