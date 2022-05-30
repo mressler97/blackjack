@@ -49,21 +49,33 @@ function Shuffle($decks) {
 
 function CheckAce ($hand, $score)
 {
+    $temp = $score
     foreach ($card in $hand)
     {
-
+        
         if ($card.value -eq 1)
         {
-            $temp = $score + 10
+            $temp += 10
             switch($temp) {
-                {$_ -le 21} {return $temp; Break}
-                Default {return $score}
+                {$_ -gt 21} {$temp-=10; Break}
+                Default {}
             }
 
         }
+        if($temp -gt 21) {
+            foreach ($card in $hand)
+            {
+        
+                if ($card.value -eq 1) {
+                    $temp -= 10
+                }
+            }
+        }
     }
 
-    return $score
+
+
+    return $temp
 }
 
 
