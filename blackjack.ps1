@@ -167,6 +167,19 @@ function Play() {
                 break
             }
         } while($option -eq "Wrong input" -or $option -eq "h")
+        
+        if (($playerScore -gt $dealerScore) -and ($playerScore -le 21))
+        {
+            write-host "you win"
+        }
+        elseif (($dealerScore -gt $playerScore) -or ($playerScore -gt 21))
+        {
+            write-host "you lose"
+        }
+        else
+        {
+            write-host "push"
+        }
         break
     }
  }
