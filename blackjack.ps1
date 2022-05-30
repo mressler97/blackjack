@@ -13,9 +13,6 @@ $script:cardCount = 0 #tracker for cards played, used to know when to reshuffle 
 class Card {
     [string]$symbol
     [int]$value
-    [int]$value2
-
-   
 }
 
 # Function creates 52 objects (cards) with their respective symbol and value, and first parameter is the amount of decks wanted in the boot
@@ -39,9 +36,7 @@ function CreateDecks($num, $deck) {
             $deck[$j].symbol = $item
             $deck[$j].value = $values[$i]
 
-            if($deck[$j].symbol -eq "A♤" -or $deck[$j].symbol -eq "A❤" -or $deck[$j].symbol -eq "A♧" -or $deck[$j].symbol -eq "A♢") {
-                $deck[$j].value2 = 11
-            }
+
             $i++
             $j++
         }
@@ -80,8 +75,6 @@ function CheckAce ($hand, $score)
         
         
     }
-
-
 
     return $temp
 }
@@ -129,7 +122,7 @@ function dealerPlay($boot, $index, $hand, $score) {
 
 # main function of the game loop, it is the game controller 
 function Play() {
-    write "Welcome to blackjack"
+    write "Welcome to Blackjack"
     do {
         try {
             [int]$amount = read-host "# of decks (1-10) you would like in boot ->"
@@ -216,8 +209,6 @@ function Play() {
         }
 
         do {
-            $script:cardCount 
-            $boot.Length-15
             $choice = read-host "Play again? y/n"
             
             if ($choice -eq "n") { 
