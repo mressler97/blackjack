@@ -1,4 +1,5 @@
 ﻿cls
+$script:cardCount = 0
 
 class Card {
     [string]$symbol
@@ -43,6 +44,8 @@ function CreateDecks($num, $deck) {
 }
 
 function Shuffle($decks) {
+    write-host "shuffling" 
+    start-sleep -seconds 2
     $decks = $decks | Sort-Object {Get-Random}
     return $decks
 }
@@ -93,6 +96,7 @@ function dealerPlay($boot, $index, $hand, $score) {
         if($score -lt 17) {
             $hand += $boot[$index]
             $score += $boot[$index].value
+            $script:cardCount++
             $index++
             $score = CheckAce $hand $score 
             
@@ -114,12 +118,9 @@ function Play() {
     read-host "press enter to continue"
 
     $deck = @()
-    $boot = CreateDecks 7 $deck
+    $boot = CreateDecks 1 $deck
 
     $boot = shuffle $boot
-
-    write "shuffling" 
-    start-sleep -seconds 2
 
     write "`n"
    
@@ -136,6 +137,7 @@ function Play() {
         $playerHand += $boot[$i], $boot[$i+1]
         $dealerHand += $boot[$i+2], $boot[$i+3]
         $i += 4
+        $script:cardCount += 4
 
         $playerHand.value | Foreach { $playerScore += $_}
         $dealerHand.value | Foreach { $dealerScore += $_}
@@ -152,6 +154,7 @@ function Play() {
                 if ($option -eq "h") {
                     $playerHand += $boot[$i]
                     $playerScore += $boot[$i].value
+                    $script:cardCount++
                     $playerscore = CheckAce $playerHand $playerscore 
                     $i++
                     print $playerHand $dealerHand $playerScore $dealerScore $False
@@ -189,11 +192,16 @@ function Play() {
             write-host "push"
         }
 
-        $choice = read-host "Play again? y/n"
         do {
+            $choice = read-host "Play again? y/n"
             if ($choice -eq "n") { 
                 exit
             } 
+            if ($script:cardCount -ge 40) {
+                $script:cardCount = 0
+                $boot = shuffle $boot
+                $i = 0
+            }
         } until ($choice -eq "n" -or $choice -eq "y")
     }
  }
