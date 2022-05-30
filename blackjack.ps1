@@ -67,6 +67,10 @@ function print($arr, $arr2, $score) {
     
 }
 
+function dealerPlay($hand, $score) {
+    $hand.symbol
+    $score
+}
 
 
 function Play() {
@@ -94,8 +98,8 @@ function Play() {
     
     $i = 0
     while ($True) {
-        $playerScore = $null
-        $dealerScore = $null
+        [int]$playerScore = $null
+        [int]$dealerScore = $null
 
         $playerHand = @()
         $dealerHand = @()
@@ -104,25 +108,25 @@ function Play() {
         $dealerHand += $boot[$i+2], $boot[$i+3]
         $i += 4
 
-        $score = 0
-        $playerHand.value | Foreach { $score += $_}
-        $score
+        $playerHand.value | Foreach { $playerScore += $_}
+        $dealerHand.value | Foreach { $dealerScore += $_}
 
-        print $playerHand $dealerHand $score
+        print $playerHand $dealerHand $playerScore
 
 
         do {
             
-            if ($score -le 21) {
+            if ($playerScore -le 21) {
                 $option = read-host "hit (h) or stand? (s)"
                 if ($option -eq "h") {
                     $playerHand += $boot[$i]
-                    $score += $boot[$i].value
+                    $playerScore += $boot[$i].value
                     $i++
-                    print $playerHand $dealerHand $score
+                    print $playerHand $dealerHand $playerScore
                 
                 } elseif($option -eq "s") {
                     #dealer turn
+                    dealerPlay $dealerHand $dealerScore
                     break
                 } else {
                     $option = "Wrong input"
