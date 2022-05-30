@@ -92,14 +92,13 @@ function dealerPlay($boot, $index, $hand, $score) {
     for($i=0; $i -lt 1; $i++) {
         if($score -lt 17) {
             $hand += $boot[$index]
-            
             $score += $boot[$index].value
+            $index++
             $score = CheckAce $hand $score 
             
             if($score -ge 17) {
                 return $hand, $score, $index
             }
-            $index++
         } else {
             return $hand, $score, $index
         }
@@ -124,10 +123,10 @@ function Play() {
 
     write "`n"
    
-    
+    $i = 0
     
     while ($True) {
-        $i = 0
+        
         [int]$playerScore = $null
         [int]$dealerScore = $null
 
@@ -162,7 +161,7 @@ function Play() {
                     $array = dealerPlay $boot $i $dealerHand $dealerScore 
                     $dealerHand = $array[0]
                     $dealerScore = $array[1]
-                    $i = $index
+                    $i = $array[2]
                     print $playerHand $dealerHand $playerScore $dealerScore $True
                     break
                 } else {
