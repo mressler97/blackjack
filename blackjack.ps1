@@ -55,12 +55,11 @@ function print($arr, $arr2, $score) {
         write-host("Your Hand:   " + $arr[0].symbol, $arr[1].symbol)
         write-host("Current score: " + $score) 
     } elseif($arr.Length -eq 3) {
-        $score = 0
         #$arr.value | Foreach { $score += $_}
         write-host("Your Hand:   " + $arr[0].symbol, $arr[1].symbol, $arr[2].symbol)
         write-host("Current score: " + $score) 
     } else {
-        $score = 0
+        #$score = 0
         #$arr.value | Foreach { $score += $_} 
         write-host("Your Hand: " + $arr.symbol)
         write-host("Current score: " + $score)
@@ -113,8 +112,9 @@ function Play() {
 
 
         do {
-            $option = read-host "hit (h) or stand? (s)"
-            if ($score -lt 21) {
+            
+            if ($score -le 21) {
+                $option = read-host "hit (h) or stand? (s)"
                 if ($option -eq "h") {
                     $playerHand += $boot[$i]
                     $score += $boot[$i].value
@@ -128,6 +128,9 @@ function Play() {
                     $option = "Wrong input"
                     $option
                 }
+            } else {
+                write-host("You busted!")
+                break
             }
         } while($option -eq "Wrong input" -or $option -eq "h")
         break
