@@ -47,24 +47,21 @@ function Shuffle($decks) {
     return $decks
 }
 
-function print($arr, $arr2) {
+function print($arr, $arr2, $score) {
     cls
     write-host("Dealer Hand: " + $arr2[0].symbol) 
-    $score = [int]($arr[0].value) + [int]($arr[1].value)
 
     if ($arr.Length -eq 2) {
         write-host("Your Hand:   " + $arr[0].symbol, $arr[1].symbol)
         write-host("Current score: " + $score) 
     } elseif($arr.Length -eq 3) {
         $score = 0
-        $arr.value | Foreach { $score += $_}
-        $sum 
+        #$arr.value | Foreach { $score += $_}
         write-host("Your Hand:   " + $arr[0].symbol, $arr[1].symbol, $arr[2].symbol)
         write-host("Current score: " + $score) 
     } else {
         $score = 0
-        $arr.value | Foreach { $score += $_}
-        $sum 
+        #$arr.value | Foreach { $score += $_} 
         write-host("Your Hand: " + $arr.symbol)
         write-host("Current score: " + $score)
     }
@@ -107,21 +104,30 @@ function Play() {
         $playerHand += $boot[$i], $boot[$i+1]
         $dealerHand += $boot[$i+2], $boot[$i+3]
         $i += 4
-        print $playerHand $dealerHand
-        
+
+        $score = 0
+        $playerHand.value | Foreach { $score += $_}
+        $score
+
+        print $playerHand $dealerHand $score
+
+
         do {
             $option = read-host "hit (h) or stand? (s)"
-            if ($option -eq "h") {
-                $playerHand += $boot[$i]
-                $i++
-                print $playerHand $dealerHand
+            if ($score -lt 21) {
+                if ($option -eq "h") {
+                    $playerHand += $boot[$i]
+                    $score += $boot[$i].value
+                    $i++
+                    print $playerHand $dealerHand $score
                 
-            } elseif($option -eq "s") {
-                #dealer turn
-                break
-            } else {
-                $option = "Wrong input"
-                $option
+                } elseif($option -eq "s") {
+                    #dealer turn
+                    break
+                } else {
+                    $option = "Wrong input"
+                    $option
+                }
             }
         } while($option -eq "Wrong input" -or $option -eq "h")
         break
