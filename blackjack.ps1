@@ -60,17 +60,17 @@ function CheckAce ($hand, $score)
                 {$_ -gt 21} {$temp-=10; Break}
                 Default {}
             }
-
-        }
-        if($temp -gt 21) {
-            foreach ($card in $hand)
-            {
+            if($temp -gt 21) {
+                foreach ($card in $hand)
+                {
         
-                if ($card.value -eq 1) {
-                    $temp -= 10
+                    if ($card.value -eq 1) {
+                        $temp -= 10
+                    }
                 }
             }
         }
+        
     }
 
 
@@ -98,8 +98,13 @@ function dealerPlay($boot, $index, $hand, $score) {
     for($i=0; $i -lt 1; $i++) {
         if($score -lt 17) {
             $hand += $boot[$index]
+            
             $score += $boot[$index].value
             $score = CheckAce $hand $score 
+            
+            if($score -ge 17) {
+                return $hand, $score, $index
+            }
             $index++
         } else {
             return $hand, $score, $index
