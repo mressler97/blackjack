@@ -47,6 +47,30 @@ function Shuffle($decks) {
     return $decks
 }
 
+function CheckAce ($hand, $score)
+{
+    foreach ($card in $hand)
+    {
+     
+        if ($card.value -eq 1)
+        {
+            $temp = $score + 10
+            if ($temp -le 21)
+            {
+                return $temp
+            }
+
+            else 
+            {
+                return $score
+            }
+        }
+    }
+
+    return $score
+}
+
+
 function print($arr, $arr2, $score) {
     cls
     write-host("Dealer Hand: " + $arr2[0].symbol) 
@@ -111,6 +135,8 @@ function Play() {
         $playerHand.value | Foreach { $playerScore += $_}
         $dealerHand.value | Foreach { $dealerScore += $_}
 
+        [int]$playerscore = CheckAce $playerHand $playerscore 
+
         print $playerHand $dealerHand $playerScore
 
 
@@ -121,6 +147,7 @@ function Play() {
                 if ($option -eq "h") {
                     $playerHand += $boot[$i]
                     $playerScore += $boot[$i].value
+                    $playerscore = CheckAce $playerHand $playerscore 
                     $i++
                     print $playerHand $dealerHand $playerScore
                 
@@ -144,4 +171,3 @@ function Play() {
 
 
 Play
-
