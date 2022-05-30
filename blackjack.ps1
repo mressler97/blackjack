@@ -184,7 +184,7 @@ function Play() {
         {
             write-host "you win"
         }
-        elseif (($dealerScore -gt $playerScore) -or ($playerScore -gt 21))
+        elseif (($dealerScore -gt $playerScore)-and ($dealerscore -le 21) -or ($playerScore -gt 21))
         {
             write-host "you lose"
         }
