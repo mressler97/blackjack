@@ -81,7 +81,7 @@ function CheckAce ($hand, $score)
 
 
 #function prints dealer's hand and player's hand and score
-function print($arr, $arr2, $score, $dealerScore, $dealerTurn) {
+function print($arr, $arr2, $score, $dealerScore, $dealerTurn, $bet, $tokens) {
     cls
     if ($dealerTurn) {
         write-host("Dealer Hand: " + $arr2.symbol) 
@@ -92,7 +92,9 @@ function print($arr, $arr2, $score, $dealerScore, $dealerTurn) {
 
         write-host("Dealer Hand: " + $arr2[0].symbol) 
         write-host("Your Hand:   " + $arr.symbol)
-        write-host("Current score: " + $score) 
+        write-host("Current score: " + $score + "`n") 
+        write-host("Your tokens: " + $tokens)
+        write-host("Bet: " + $bet)
     }
 }
 
@@ -122,6 +124,7 @@ function dealerPlay($boot, $index, $hand, $score) {
 
 # main function of the game loop, it is the game controller 
 function Play() {
+    [int]$tokens = 50
     write "Welcome to Blackjack"
     do {
         try {
@@ -137,7 +140,6 @@ function Play() {
     $boot = shuffle $boot
 
     write "`n"
-   
     $i = 0
     
     while ($True) {
@@ -157,8 +159,15 @@ function Play() {
         $dealerHand.value | Foreach { $dealerScore += $_}
 
         [int]$playerscore = CheckAce $playerHand $playerscore 
+        cls
+        write-host("Your tokens: " + $tokens)
+        do {
+            [int]$bet = read-host("Bet amount? Min bet is 5.")
+        }until($bet -ge 5 -and $bet -le $tokens)
 
-        print $playerHand $dealerHand $playerScore $dealerScore $False
+        $tokens -= $bet
+
+        print $playerHand $dealerHand $playerScore $dealerScore $False $bet $tokens
 
 
         do {
@@ -172,7 +181,7 @@ function Play() {
                     $script:cardCount++
                     $playerscore = CheckAce $playerHand $playerscore 
                     $i++
-                    print $playerHand $dealerHand $playerScore $dealerScore $False
+                    print $playerHand $dealerHand $playerScore $dealerScore $False $bet $tokens
                 
                 } elseif($option -eq "s") {
                     #dealer turn, returns hand, score, index
@@ -181,14 +190,14 @@ function Play() {
                     $dealerHand = $array[0]
                     $dealerScore = $array[1]
                     $i = $array[2]
-                    print $playerHand $dealerHand $playerScore $dealerScore $True
+                    print $playerHand $dealerHand $playerScore $dealerScore $True $bet $tokens
                     break
                 } else {
                     $option = "Wrong input"
                     $option
                 }
             } else {
-                write-host("You busted!")
+                write-host("You busted!`n")
                 break
             }
         } while($option -eq "Wrong input" -or $option -eq "h")
@@ -196,16 +205,26 @@ function Play() {
         if (($playerScore -gt $dealerScore) -and ($playerScore -le 21))
         {
             write-host "you win"
+            $tokens += ($bet*2)
         }
         elseif (($dealerScore -gt $playerScore)-and ($dealerscore -le 21) -or ($playerScore -gt 21))
         {
             write-host "you lose"
         } elseif($dealerScore -gt 21 -and $playerScore -le 21) {
             write-host "You win!"
+            $tokens += ($bet*2)
         }
         else
         {
             write-host "push"
+            $tokens += $bet
+        }
+
+        if($tokens -le 0) {
+            write-host("You're all out of tokens! :(")
+            start-sleep -seconds 2
+            exit
+
         }
 
         do {
